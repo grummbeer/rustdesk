@@ -1353,7 +1353,12 @@ class CanvasModel with ChangeNotifier {
   }
 
   static double get windowBorderWidth => stateGlobal.windowBorderWidth.value;
-  static double get tabBarHeight => stateGlobal.tabBarHeight;
+
+  //  static double get tabBarHeight =>
+  //      stateGlobal.tabBarHeight; //.value.toDouble();
+
+  // title bar height reactivity broken?
+  static double tabBarHeight = stateGlobal.tabBarHeight.value.toDouble();
 
   moveDesktopMouse(double x, double y) {
     if (size.width == 0 || size.height == 0) {

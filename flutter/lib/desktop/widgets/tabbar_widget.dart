@@ -21,7 +21,6 @@ import 'package:window_manager/window_manager.dart';
 
 import '../../utils/multi_window_manager.dart';
 
-const double _kTabBarHeight = kDesktopRemoteTabBarHeight;
 const double _kIconSize = 18;
 const double _kDividerIndent = 10;
 const double _kActionIconSize = 12;
@@ -294,11 +293,15 @@ class DesktopTab extends StatelessWidget {
           offstage: !stateGlobal.showTabBar.isTrue ||
               (kUseCompatibleUiMode && isHideSingleItem()),
           child: SizedBox(
-            height: _kTabBarHeight,
+            // title bar reactive height
+            height: stateGlobal.tabBarHeight.value,
+            // height: stateGlobal.tabBarHeight, //.value,
             child: Column(
               children: [
                 SizedBox(
-                  height: _kTabBarHeight - 1,
+                  // title bar reactive height
+                  height: stateGlobal.tabBarHeight.value - 1,
+                  // height: stateGlobal.tabBarHeight, - 1,
                   child: _buildBar(),
                 ),
                 const Divider(
@@ -402,8 +405,14 @@ class DesktopTab extends StatelessWidget {
                             offstage: !showLogo,
                             child: SvgPicture.asset(
                               'assets/logo.svg',
-                              width: 20,
-                              height: 20,
+                              width: stateGlobal.tabBarHeight >
+                                      kDesktopRemoteTabBarHeight
+                                  ? 20
+                                  : 16,
+                              height: stateGlobal.tabBarHeight >
+                                      kDesktopRemoteTabBarHeight
+                                  ? 20
+                                  : 16,
                             )),
                         Offstage(
                             offstage: !showTitle,
@@ -412,7 +421,10 @@ class DesktopTab extends StatelessWidget {
                               style: TextStyle(fontSize: 13),
                             ).marginOnly(left: 2))
                       ]).marginOnly(
-                        left: 10,
+                        left: stateGlobal.tabBarHeight >
+                                kDesktopRemoteTabBarHeight
+                            ? 10
+                            : 5,
                         right: 10,
                       ),
                     ),
@@ -1037,7 +1049,9 @@ class _TabState extends State<_Tab> with RestorationMixin {
               child: Row(
                 children: [
                   SizedBox(
-                      height: _kTabBarHeight,
+                      // title bar reactive height
+                      height: stateGlobal.tabBarHeight.value,
+                      // height: stateGlobal.tabBarHeight,
                       child: Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
@@ -1045,7 +1059,8 @@ class _TabState extends State<_Tab> with RestorationMixin {
                             Obx((() => _CloseButton(
                                   visible: hover.value && widget.closable,
                                   tabSelected: isSelected,
-                                  onClose: () => widget.onClose(),
+                                  onClose: () =>
+                                      debugPrint('close'), //widget.onClose(),
                                 )))
                           ])).paddingOnly(left: 10, right: 5),
                   Offstage(
@@ -1107,23 +1122,24 @@ class _CloseButton extends StatelessWidget {
   }
 }
 
+// ignore: must_be_immutable
 class ActionIcon extends StatefulWidget {
   final String? message;
   final IconData icon;
   final Function() onTap;
   final bool isClose;
   final double iconSize;
-  final double boxSize;
+  // double boxSize;
 
-  const ActionIcon(
-      {Key? key,
-      this.message,
-      required this.icon,
-      required this.onTap,
-      this.isClose = false,
-      this.iconSize = _kActionIconSize,
-      this.boxSize = _kTabBarHeight - 1})
-      : super(key: key);
+  ActionIcon({
+    Key? key,
+    this.message,
+    required this.icon,
+    required this.onTap,
+    this.isClose = false,
+    this.iconSize = _kActionIconSize,
+    //  this.boxSize = kDesktopRemoteTabBarHeight
+  }) : super(key: key);
 
   @override
   State<ActionIcon> createState() => _ActionIconState();
@@ -1151,8 +1167,10 @@ class _ActionIconState extends State<ActionIcon> {
           onHover: (value) => hover.value = value,
           onTap: widget.onTap,
           child: SizedBox(
-            height: widget.boxSize,
-            width: widget.boxSize,
+            // height: widget.boxSize,
+            // width: widget.boxSize,
+            height: stateGlobal.tabBarHeight.value,
+            width: stateGlobal.tabBarHeight.value,
             child: Icon(
               widget.icon,
               color: hover.value && widget.isClose

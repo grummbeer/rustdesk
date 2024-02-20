@@ -138,7 +138,9 @@ class DraggableChatWindow extends StatelessWidget {
                 icon: IconFont.close,
                 onTap: chatModel.hideChatWindowOverlay,
                 isClose: true,
-                boxSize: 32,
+
+                // fixed height?
+                // boxSize: 32,
               ))
         ],
       ),

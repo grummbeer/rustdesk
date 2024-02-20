@@ -9,6 +9,7 @@ import 'package:flutter_hbb/consts.dart';
 import 'package:flutter_hbb/desktop/widgets/tabbar_widget.dart';
 import 'package:flutter_hbb/models/chat_model.dart';
 import 'package:flutter_hbb/models/cm_file_model.dart';
+import 'package:flutter_hbb/models/state_model.dart';
 import 'package:flutter_hbb/utils/platform_channel.dart';
 import 'package:get/get.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
@@ -236,27 +237,31 @@ class ConnectionManagerState extends State<ConnectionManager> {
   }
 
   Widget buildTitleBar() {
-    return SizedBox(
-      height: kDesktopRemoteTabBarHeight,
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          const _AppIcon(),
-          Expanded(
-            child: GestureDetector(
-              onPanStart: (d) {
-                windowManager.startDragging();
-              },
-              child: Container(
-                color: Theme.of(context).colorScheme.background,
+    return Obx(
+      () => SizedBox(
+        // title bar height reactive
+        // height: stateGlobal.tabBarHeight,
+        height: stateGlobal.tabBarHeight.value,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const _AppIcon(),
+            Expanded(
+              child: GestureDetector(
+                onPanStart: (d) {
+                  windowManager.startDragging();
+                },
+                child: Container(
+                  color: Theme.of(context).colorScheme.background,
+                ),
               ),
             ),
-          ),
-          const SizedBox(
-            width: 4.0,
-          ),
-          const _CloseButton()
-        ],
+            const SizedBox(
+              width: 4.0,
+            ),
+            const _CloseButton()
+          ],
+        ),
       ),
     );
   }

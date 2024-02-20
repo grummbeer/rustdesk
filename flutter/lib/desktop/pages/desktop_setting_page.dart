@@ -12,6 +12,7 @@ import 'package:flutter_hbb/desktop/pages/desktop_home_page.dart';
 import 'package:flutter_hbb/desktop/pages/desktop_tab_page.dart';
 import 'package:flutter_hbb/models/platform_model.dart';
 import 'package:flutter_hbb/models/server_model.dart';
+import 'package:flutter_hbb/models/state_model.dart';
 import 'package:flutter_hbb/plugin/manager.dart';
 import 'package:flutter_hbb/plugin/widgets/desktop_settings.dart';
 import 'package:get/get.dart';
@@ -343,6 +344,28 @@ class _GeneralState extends State<_General> {
       'enable-check-update',
       isServer: false,
     ));
+
+    children.add(_OptionCheckBox(
+      context,
+      'setting.option.enable_enlarged_title_bar.label',
+      'enable-enlarged-title-bar',
+      isServer: false,
+      update: (value) => {
+        stateGlobal.tabBarHeight.value = value
+            ? kDesktopRemoteTabBarHeightEnlarged
+            : kDesktopRemoteTabBarHeight
+        // stateGlobal.tabBarHeight.value =
+        //     mainGetLocalBoolOptionSync('enable-enlarged-title-bar')
+        //         ? kDesktopRemoteTabBarHeightEnlarged
+        //         : kDesktopRemoteTabBarHeight
+
+        // stateGlobal.tabBarHeight =
+        //     mainGetLocalBoolOptionSync('enable-enlarged-title-bar')
+        //         ? kDesktopRemoteTabBarHeightEnlarged
+        //         : kDesktopRemoteTabBarHeight
+      },
+    ));
+
     if (bind.mainShowOption(key: 'allow-linux-headless')) {
       children.add(_OptionCheckBox(
           context, 'Allow linux headless', 'allow-linux-headless'));
@@ -365,7 +388,7 @@ class _GeneralState extends State<_General> {
                 context,
                 'Remove wallpaper during incoming sessions',
                 option,
-                update: () {
+                update: (value) {
                   setState(() {});
                 },
               ),
@@ -851,7 +874,7 @@ class _SafetyState extends State<_Safety> with AutomaticKeepAliveClientMixin {
 
   List<Widget> directIp(BuildContext context) {
     TextEditingController controller = TextEditingController();
-    update() => setState(() {});
+    update(value) => setState(() {});
     RxBool applyEnabled = false.obs;
     return [
       _OptionCheckBox(context, 'Enable direct IP access', 'direct-server',
@@ -1000,7 +1023,7 @@ class _SafetyState extends State<_Safety> with AutomaticKeepAliveClientMixin {
 
   List<Widget> autoDisconnect(BuildContext context) {
     TextEditingController controller = TextEditingController();
-    update() => setState(() {});
+    update(value) => setState(() {});
     RxBool applyEnabled = false.obs;
     final optionKey = 'allow-auto-disconnect';
     final timeoutKey = 'auto-disconnect-timeout';
@@ -1688,7 +1711,7 @@ Widget _Card(
 
 // ignore: non_constant_identifier_names
 Widget _OptionCheckBox(BuildContext context, String label, String key,
-    {Function()? update,
+    {/*ValueChanged<bool>? */ Function(bool value)? update,
     bool reverse = false,
     bool enabled = true,
     Icon? checkedIcon,
@@ -1712,7 +1735,10 @@ Widget _OptionCheckBox(BuildContext context, String label, String key,
       } else {
         ref.value = readOption;
       }
-      update?.call();
+      if (update != null) {
+        update(ref.value);
+      }
+      //update?.call();
     }
   }
 
